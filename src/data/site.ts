@@ -5,8 +5,6 @@ export const SITE = {
   instituicao: 'IFSP Campus São José dos Campos',
   descricao:
     'Materiais didáticos e projetos do professor Ivan Lucas Arantes, do IFSP Campus São José dos Campos: automação, computação, sistemas embarcados e inteligência artificial.',
-  github: 'https://github.com/ivanlucas7',
-  repositorio: 'https://github.com/ivanlucas7/site',
 };
 
 /**
