@@ -1,0 +1,19 @@
+{
+  "name": "portal-materiais-ivan-lucas",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portal de materiais didáticos e projetos do professor Ivan Lucas Arantes (IFSP Campus São José dos Campos).",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "astro build && node scripts/verificar-site.mjs"
+  },
+  "dependencies": {
+    "astro": "5.18.2"
+  },
+  "engines": {
+    "node": ">=18.20.8"
+  }
+}

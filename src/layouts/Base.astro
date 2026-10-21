@@ -1,0 +1,42 @@
+---
+import '../styles/global.css';
+import Cabecalho from '../components/Cabecalho.astro';
+import Rodape from '../components/Rodape.astro';
+import { SITE } from '../data/site';
+
+interface Props {
+  titulo?: string;
+  descricao?: string;
+}
+
+const { titulo, descricao = SITE.descricao } = Astro.props;
+const tituloCompleto = titulo ? `${titulo} | ${SITE.titulo}` : `${SITE.titulo} | ${SITE.autor}`;
+const canonica = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descricao} />
+    <meta name="author" content={SITE.autor} />
+    <link rel="canonical" href={canonica} />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:site_name" content={SITE.titulo} />
+  </head>
+  <body>
+    <a class="pular-link" href="#conteudo">Pular para o conteúdo</a>
+    <Cabecalho />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <Rodape />
+  </body>
+</html>

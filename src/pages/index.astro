@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CartaoMaterial from '../components/CartaoMaterial.astro';
+import { SITE, SECOES } from '../data/site';
+import { url } from '../data/url';
+
+const minicursos = (await getCollection('minicursos')).sort((a, b) => a.data.ordem - b.data.ordem);
+const destaques = minicursos.filter((m) => m.data.destaque);
+const emBreve = SECOES.filter((s) => !s.disponivel);
+---
+
+<Base>
+  <section class="apresentacao">
+    <div class="container apresentacao-interno">
+      <p class="apresentacao-sobre">{SITE.autor} · {SITE.instituicao}</p>
+      <h1>Materiais didáticos e projetos em tecnologia</h1>
+      <p class="apresentacao-texto">
+        Bem-vindo ao portal de materiais didáticos e projetos do professor Ivan Lucas Arantes, do IFSP Campus São José
+        dos Campos. Este espaço reúne recursos educacionais e conteúdos técnicos relacionados à automação, computação,
+        sistemas embarcados e inteligência artificial. Novos materiais, minicursos, tutoriais e projetos serão
+        adicionados continuamente.
+      </p>
+      <div class="apresentacao-acoes">
+        <a class="botao" href={url('materiais/')}>Acessar os materiais</a>
+        <a class="botao botao-secundario" href={SITE.github}>GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao container" aria-labelledby="destaques">
+    <div class="secao-titulo">
+      <h2 id="destaques">Em destaque</h2>
+      <a href={url('materiais/')}>Ver todos os materiais</a>
+    </div>
+    <div class="grade">
+      {destaques.map((m) => <CartaoMaterial material={m} />)}
+    </div>
+  </section>
+
+  <section class="secao container" aria-labelledby="em-breve">
+    <div class="secao-titulo">
+      <h2 id="em-breve">Próximas seções</h2>
+    </div>
+    <ul class="em-breve">
+      {
+        emBreve.map((s) => (
+          <li>
+            <strong>{s.titulo}</strong>
+            <span class="texto-suave">{s.descricao}</span>
+            <span class="etiqueta">Em breve</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .apresentacao {
+    background: linear-gradient(180deg, var(--cor-primaria-suave), var(--cor-fundo));
+    border-bottom: 1px solid var(--cor-borda);
+  }
+
+  .apresentacao-interno {
+    padding-block: 3rem 2.5rem;
+    max-width: 52rem;
+    margin-inline: 0;
+  }
+
+  @media (min-width: 72rem) {
+    .apresentacao-interno {
+      margin-inline: calc((100% - var(--largura)) / 2);
+    }
+  }
+
+  .apresentacao-sobre {
+    font-weight: 600;
+    color: var(--cor-destaque);
+    margin-bottom: 0.75rem;
+  }
+
+  .apresentacao-texto {
+    font-size: 1.125rem;
+    color: var(--cor-texto-suave);
+  }
+
+  .apresentacao-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .em-breve {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  }
+
+  .em-breve li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    padding: 1rem 1.25rem;
+    border: 1px dashed var(--cor-borda);
+    border-radius: var(--raio);
+  }
+
+  .em-breve .texto-suave {
+    font-size: 0.95rem;
+  }
+</style>

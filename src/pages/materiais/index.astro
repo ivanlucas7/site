@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CartaoMaterial from '../../components/CartaoMaterial.astro';
+
+const minicursos = (await getCollection('minicursos')).sort((a, b) => a.data.ordem - b.data.ordem);
+---
+
+<Base titulo="Materiais" descricao="Catálogo de minicursos, apostilas, apresentações, códigos e arquivos para download.">
+  <div class="container secao">
+    <h1>Materiais</h1>
+    <p class="texto-suave introducao">
+      Catálogo de minicursos com apostilas, apresentações, códigos, vídeos e arquivos de apoio.
+    </p>
+
+    <form class="busca" role="search" onsubmit="return false">
+      <label for="campo-busca">Buscar materiais</label>
+      <input id="campo-busca" type="search" placeholder="Ex.: App Inventor, TinyML, Arduino" autocomplete="off" />
+      <p id="resultado-busca" class="texto-suave" aria-live="polite"></p>
+    </form>
+
+    <section aria-labelledby="minicursos">
+      <h2 id="minicursos">Minicursos</h2>
+      <div class="grade" id="lista-materiais">
+        {minicursos.map((m) => <CartaoMaterial material={m} />)}
+      </div>
+      <p id="sem-resultados" class="aviso-vazio" hidden>Nenhum material encontrado para esta busca.</p>
+    </section>
+  </div>
+</Base>
+
+<script>
+  const campo = document.querySelector<HTMLInputElement>('#campo-busca')!;
+  const cartoes = [...document.querySelectorAll<HTMLElement>('#lista-materiais [data-busca]')];
+  const semResultados = document.querySelector<HTMLElement>('#sem-resultados')!;
+  const resultado = document.querySelector<HTMLElement>('#resultado-busca')!;
+
+  const normalizar = (t: string) =>
+    t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+  campo.addEventListener('input', () => {
+    const termos = normalizar(campo.value).split(/\s+/).filter(Boolean);
+    let visiveis = 0;
+    for (const cartao of cartoes) {
+      const texto = normalizar(cartao.dataset.busca ?? '');
+      const mostra = termos.every((t) => texto.includes(t));
+      cartao.hidden = !mostra;
+      if (mostra) visiveis++;
+    }
+    semResultados.hidden = visiveis > 0;
+    resultado.textContent = termos.length
+      ? `${visiveis} ${visiveis === 1 ? 'material encontrado' : 'materiais encontrados'}`
+      : '';
+  });
+</script>
+
+<style>
+  .introducao {
+    max-width: 44rem;
+  }
+
+  .busca {
+    margin: 1.5rem 0 2rem;
+    max-width: 36rem;
+  }
+
+  .busca label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .busca input {
+    width: 100%;
+    font: inherit;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    background: var(--cor-superficie);
+    color: var(--cor-texto);
+  }
+
+  .busca input:focus-visible {
+    border-color: var(--cor-primaria);
+  }
+
+  .busca p {
+    margin: 0.4rem 0 0;
+    font-size: 0.9rem;
+    min-height: 1.4em;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+</style>

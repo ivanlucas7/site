@@ -1,0 +1,119 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ListaRecursos from '../../components/ListaRecursos.astro';
+import { GRUPOS_RECURSO } from '../../data/site';
+import { url } from '../../data/url';
+
+export async function getStaticPaths() {
+  const minicursos = await getCollection('minicursos');
+  return minicursos.map((material) => ({ params: { slug: material.id }, props: { material } }));
+}
+
+interface Props {
+  material: CollectionEntry<'minicursos'>;
+}
+
+const { material } = Astro.props;
+const { titulo, subtitulo, resumo, tags, recursos, atualizado } = material.data;
+const { Content } = await render(material);
+const grupos = GRUPOS_RECURSO.map((g) => ({
+  ...g,
+  recursos: recursos.filter((r) => (g.tipos as readonly string[]).includes(r.tipo)),
+}));
+const dataFormatada = atualizado.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+---
+
+<Base titulo={subtitulo ? `${subtitulo}: ${titulo}` : titulo} descricao={resumo}>
+  <div class="container secao">
+    <nav aria-label="Trilha de navegação" class="trilha">
+      <ol>
+        <li><a href={url()}>Início</a></li>
+        <li><a href={url('materiais/')}>Materiais</a></li>
+        <li aria-current="page">{titulo}</li>
+      </ol>
+    </nav>
+
+    <header class="cabecalho-material">
+      {subtitulo && <p class="sobre">{subtitulo}</p>}
+      <h1>{titulo}</h1>
+      <div class="descricao texto-suave"><Content /></div>
+      <ul class="lista-etiquetas" aria-label="Assuntos">
+        {tags.map((t) => <li class="etiqueta">{t}</li>)}
+      </ul>
+      <p class="atualizado texto-suave">Atualizado em <time datetime={atualizado.toISOString()}>{dataFormatada}</time></p>
+    </header>
+
+    <nav aria-label="Seções desta página" class="indice">
+      <ul>
+        {grupos.map((g) => <li><a href={`#grupo-${g.id}`}>{g.titulo} ({g.recursos.length})</a></li>)}
+      </ul>
+    </nav>
+
+    {grupos.map((g) => <ListaRecursos id={g.id} titulo={g.titulo} recursos={g.recursos} />)}
+  </div>
+</Base>
+
+<style>
+  .trilha ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    font-size: 0.9rem;
+    color: var(--cor-texto-suave);
+  }
+
+  .trilha li + li::before {
+    content: '/';
+    margin-right: 0.25rem;
+  }
+
+  .sobre {
+    margin: 0 0 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cor-destaque);
+  }
+
+  .cabecalho-material {
+    max-width: 48rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .descricao {
+    font-size: 1.1rem;
+  }
+
+  .atualizado {
+    margin: 0.75rem 0 0;
+    font-size: 0.9rem;
+  }
+
+  .indice ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem;
+  }
+
+  .indice a {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    background: var(--cor-superficie);
+  }
+
+  .indice a:hover {
+    border-color: var(--cor-primaria);
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+import { SITE } from '../data/site';
+---
+
+<footer class="rodape">
+  <div class="container rodape-interno">
+    <p>{SITE.autor} · {SITE.instituicao}</p>
+    <p><a href={SITE.repositorio}>Código-fonte no GitHub</a></p>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    border-top: 1px solid var(--cor-borda);
+    background: var(--cor-superficie);
+    font-size: 0.9rem;
+    color: var(--cor-texto-suave);
+  }
+
+  .rodape-interno {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1.5rem;
+    padding-block: 1.25rem;
+  }
+
+  .rodape p {
+    margin: 0;
+  }
+</style>

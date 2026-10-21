@@ -1,0 +1,21 @@
+# Dependências e build
+node_modules/
+dist/
+.astro/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Variáveis de ambiente e credenciais
+.env
+.env.*
+!.env.example
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/

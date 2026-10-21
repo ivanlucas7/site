@@ -1,0 +1,107 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { ROTULO_TIPO } from '../data/site';
+import { arquivo } from '../data/url';
+
+type Recurso = CollectionEntry<'minicursos'>['data']['recursos'][number];
+
+interface Props {
+  id: string;
+  titulo: string;
+  recursos: Recurso[];
+}
+
+const { id, titulo, recursos } = Astro.props;
+---
+
+<section class="grupo" aria-labelledby={`grupo-${id}`}>
+  <h2 id={`grupo-${id}`}>{titulo}</h2>
+  {
+    recursos.length === 0 ? (
+      <p class="aviso-vazio">Os materiais desta seção serão adicionados posteriormente.</p>
+    ) : (
+      <ul class="recursos">
+        {recursos.map((r) => {
+          const externo = Boolean(r.url);
+          const href = r.url ?? arquivo(r.arquivo!);
+          return (
+            <li class="recurso">
+              <div class="recurso-info">
+                <span class="etiqueta">{ROTULO_TIPO[r.tipo]}</span>
+                <h3>{r.titulo}</h3>
+                {r.descricao && <p class="texto-suave">{r.descricao}</p>}
+                {r.formato && <p class="recurso-formato texto-suave">{r.formato}</p>}
+              </div>
+              <a
+                class="botao botao-secundario"
+                href={href}
+                {...(externo ? { rel: 'noopener', target: '_blank' } : { download: '' })}
+              >
+                {externo ? 'Abrir link' : 'Baixar'}
+                <span class="sr-only">: {r.titulo}{externo ? ' (abre em nova aba)' : ''}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .grupo + .grupo {
+    margin-top: 2rem;
+  }
+
+  .recursos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .recurso {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+  }
+
+  .recurso-info {
+    min-width: 0;
+  }
+
+  .recurso h3 {
+    margin: 0.4rem 0 0.25rem;
+  }
+
+  .recurso p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .recurso-formato {
+    margin-top: 0.35rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .recurso .botao {
+    flex: none;
+  }
+
+  @media (max-width: 560px) {
+    .recurso {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .recurso .botao {
+      justify-content: center;
+    }
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url } from '../data/url';
+
+interface Props {
+  material: CollectionEntry<'minicursos'>;
+  nivelTitulo?: 'h2' | 'h3';
+}
+
+const { material, nivelTitulo: Titulo = 'h3' } = Astro.props;
+const { titulo, subtitulo, resumo, tags, recursos } = material.data;
+const href = url(`materiais/${material.id}/`);
+const total = recursos.length;
+// Texto usado pela busca do catálogo.
+const textoBusca = [titulo, subtitulo, resumo, ...tags, ...recursos.map((r) => `${r.titulo} ${r.descricao ?? ''}`)]
+  .join(' ')
+  .toLowerCase();
+---
+
+<article class="cartao" data-busca={textoBusca}>
+  {subtitulo && <p class="cartao-sobre">{subtitulo}</p>}
+  <Titulo class="cartao-titulo"><a href={href}>{titulo}</a></Titulo>
+  <p class="cartao-resumo">{resumo}</p>
+  <ul class="lista-etiquetas" aria-label="Assuntos">
+    {tags.map((t) => <li class="etiqueta">{t}</li>)}
+  </ul>
+  <p class="cartao-rodape texto-suave">
+    {total === 0 ? 'Materiais em preparação' : total === 1 ? '1 material disponível' : `${total} materiais disponíveis`}
+  </p>
+</article>
+
+<style>
+  .cartao {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.25rem;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    transition: border-color 0.15s;
+  }
+
+  .cartao:hover,
+  .cartao:focus-within {
+    border-color: var(--cor-primaria);
+  }
+
+  .cartao-sobre {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cor-destaque);
+  }
+
+  .cartao-titulo {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .cartao-titulo a {
+    color: var(--cor-texto);
+    text-decoration: none;
+  }
+
+  /* Torna o cartão inteiro clicável sem aninhar elementos interativos. */
+  .cartao-titulo a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--raio);
+  }
+
+  .cartao-titulo a:focus-visible {
+    outline: none;
+  }
+
+  .cartao-titulo a:focus-visible::after {
+    outline: 3px solid var(--cor-foco);
+    outline-offset: 2px;
+  }
+
+  .cartao-resumo {
+    margin: 0;
+    color: var(--cor-texto-suave);
+  }
+
+  .cartao-rodape {
+    margin: auto 0 0;
+    padding-top: 0.25rem;
+    font-size: 0.9rem;
+  }
+</style>
