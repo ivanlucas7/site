@@ -44,7 +44,8 @@ Não há banco de dados, backend, autenticação nem bibliotecas de interface. A
 │   ├── layouts/Base.astro           # Estrutura comum das páginas (SEO, cabeçalho, rodapé)
 │   ├── pages/                       # Rotas: /, /materiais/, /materiais/<nome>/ e 404
 │   └── styles/global.css            # Cores, tipografia e estilos gerais
-├── astro.config.mjs                 # Endereço do site e caminho base
+├── astro.config.mjs                 # Endereço do site e caminho base (GitHub Pages ou Vercel)
+├── vercel.json                      # Configuração da publicação na Vercel
 └── package.json
 ```
 
@@ -166,6 +167,13 @@ https://ivanlucas7.github.io/site/. O andamento aparece na aba **Actions** do re
 
 Configuração do Pages (feita uma única vez): **Settings → Pages → Build and deployment → Source: Deploy from a
 branch**, branch `gh-pages`, pasta `/ (root)`.
+
+### Vercel
+
+O mesmo repositório também pode ser publicado na Vercel. Importe o repositório em vercel.com; o arquivo
+`vercel.json` já define o framework (Astro), o comando `npm run build` e a pasta `dist`. Durante a compilação na
+Vercel o site é gerado na raiz do domínio (sem o `/site`), automaticamente. Cada envio para `main` gera uma nova
+publicação na Vercel também.
 
 Para usar outro endereço (por exemplo, um domínio próprio), ajuste `site` e `base` em `astro.config.mjs` ou defina
 as variáveis de ambiente `SITE_URL` e `BASE_PATH` na compilação.

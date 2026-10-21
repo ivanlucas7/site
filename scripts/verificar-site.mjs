@@ -5,7 +5,7 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 
 const DIST = new URL('../dist/', import.meta.url).pathname;
-const BASE = (process.env.BASE_PATH ?? '/site').replace(/\/$/, '');
+const BASE = (process.env.BASE_PATH ?? (process.env.VERCEL ? '/' : '/site')).replace(/\/$/, '');
 const PAGINAS_ESPERADAS = ['index.html', 'materiais/index.html', 'materiais/app-inventor/index.html', 'materiais/tinyml/index.html', '404.html'];
 
 const erros = [];
